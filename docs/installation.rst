@@ -533,6 +533,10 @@ Here's a list of some of the recommended packages.
 +------------------+---------------------------------------+-------------------------------------------------+
 | Presto           | ``pip install pyhive``                | ``presto://``                                   |
 +------------------+---------------------------------------+-------------------------------------------------+
+| SAP HANA         | ``pip install hdbcli sqlalchemy-hana``|  ``hana://``                                    |
+|                  | or                                    |                                                 |
+|                  | ``pip install apache-superset[hana]`` |                                                 |
++------------------+---------------------------------------+-------------------------------------------------+
 | Snowflake        | ``pip install snowflake-sqlalchemy``  | ``snowflake://``                                |
 +------------------+---------------------------------------+-------------------------------------------------+
 | SQLite           |                                       | ``sqlite://``                                   |
@@ -544,11 +548,6 @@ Here's a list of some of the recommended packages.
 | Vertica          | ``pip install                         |  ``vertica+vertica_python://``                  |
 |                  | sqlalchemy-vertica-python``           |                                                 |
 +------------------+---------------------------------------+-------------------------------------------------+
-| Hana             | ``pip install hdbcli sqlalchemy-hana``|  ``hana://``                                    |
-|                  | or                                    |                                                 |
-|                  | ``pip install apache-superset[hana]`` |                                                 |
-+------------------+---------------------------------------+-------------------------------------------------+
-
 
 Note that many other databases are supported, the main criteria being the
 existence of a functional SqlAlchemy dialect and Python driver. Googling
