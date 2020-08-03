@@ -483,70 +483,67 @@ connect to the databases you want to access through Superset.
 Here's a list of some of the recommended packages.
 
 +------------------+---------------------------------------+-------------------------------------------------+
-| database         | pypi package                          | SQLAlchemy URI prefix                           |
+| database         | PyPI package                          | SQLAlchemy URI prefix                           |
 +==================+=======================================+=================================================+
-| Amazon Athena    | ``pip install "PyAthenaJDBC>1.0.9"``  | ``awsathena+jdbc://``                           |
+| Amazon Athena    | ``PyAthenaJDBC>1.0.9``                | ``awsathena+jdbc://``                           |
 +------------------+---------------------------------------+-------------------------------------------------+
-| Amazon Athena    | ``pip install "PyAthena>1.2.0"``      | ``awsathena+rest://``                           |
+| Amazon Athena    | ``incubator-superset[athena]``        | ``awsathena+rest://``                           |
 +------------------+---------------------------------------+-------------------------------------------------+
-| Amazon Redshift  | ``pip install sqlalchemy-redshift``   | ``redshift+psycopg2://``                        |
+| Amazon Redshift  | ``sqlalchemy-redshift``               | ``redshift+psycopg2://``                        |
 +------------------+---------------------------------------+-------------------------------------------------+
-| Apache Drill     | ``pip install sqlalchemy-drill``      | For the REST API:``                             |
+| Apache Drill     | ``sqlalchemy-drill``                  | For the REST API:``                             |
 |                  |                                       | ``drill+sadrill://``                            |
 |                  |                                       | For JDBC                                        |
 |                  |                                       | ``drill+jdbc://``                               |
 +------------------+---------------------------------------+-------------------------------------------------+
-| Apache Druid     | ``pip install pydruid``               | ``druid://``                                    |
+| Apache Druid     | ``incubator-superset[druid]``         | ``druid://``                                    |
 +------------------+---------------------------------------+-------------------------------------------------+
-| Apache Hive      | ``pip install pyhive``                | ``hive://``                                     |
+| Apache Hive      | ``incubator-superset[hive]``          | ``hive://``                                     |
 +------------------+---------------------------------------+-------------------------------------------------+
-| Apache Impala    | ``pip install impyla``                | ``impala://``                                   |
+| Apache Impala    | ``impyla``                            | ``impala://``                                   |
 +------------------+---------------------------------------+-------------------------------------------------+
-| Apache Kylin     | ``pip install kylinpy``               | ``kylin://``                                    |
+| Apache Kylin     | ``kylinpy``                           | ``kylin://``                                    |
 +------------------+---------------------------------------+-------------------------------------------------+
-| Apache Pinot     | ``pip install pinotdb``               | ``pinot+http://CONTROLLER:5436/``               |
+| Apache Pinot     | ``pinotdb``                           | ``pinot+http://CONTROLLER:5436/``               |
 |                  |                                       | ``query?server=http://CONTROLLER:5983/``        |
 +------------------+---------------------------------------+-------------------------------------------------+
-| Apache Spark SQL | ``pip install pyhive``                | ``jdbc+hive://``                                |
+| Apache Spark SQL | ``pyhive``                            | ``jdbc+hive://``                                |
 +------------------+---------------------------------------+-------------------------------------------------+
-| BigQuery         | ``pip install pybigquery``            | ``bigquery://``                                 |
+| BigQuery         | ``incubator-superset[bigquery]``      | ``bigquery://``                                 |
 +------------------+---------------------------------------+-------------------------------------------------+
-| ClickHouse       | ``pip install sqlalchemy-clickhouse`` |                                                 |
+| ClickHouse       | ``sqlalchemy-clickhouse``             |                                                 |
 +------------------+---------------------------------------+-------------------------------------------------+
-| CockroachDB      | ``pip install cockroachdb``           | ``cockroachdb://``                              |
+| CockroachDB      | ``incubator-superset[cockroachdb]``   | ``cockroachdb://``                              |
 +------------------+---------------------------------------+-------------------------------------------------+
-| Dremio           | ``pip install sqlalchemy_dremio``     | ``dremio://``                                   |
+| Dremio           | ``incubator-superset[dremio]``        | ``dremio://``                                   |
 +------------------+---------------------------------------+-------------------------------------------------+
-| Elasticsearch    | ``pip install elasticsearch-dbapi``   | ``elasticsearch+http://``                       |
+| Elasticsearch    | ``incubator-superset[elasticsearch]`` | ``elasticsearch+http://``                       |
 +------------------+---------------------------------------+-------------------------------------------------+
-| Exasol           | ``pip install sqlalchemy-exasol``     | ``exa+pyodbc://``                               |
+| Exasol           | ``sqlalchemy-exasol``                 | ``exa+pyodbc://``                               |
 +------------------+---------------------------------------+-------------------------------------------------+
-| Google Sheets    | ``pip install gsheetsdb``             | ``gsheets://``                                  |
+| Google Sheets    | ``incubator-superset[gsheets]``       | ``gsheets://``                                  |
 +------------------+---------------------------------------+-------------------------------------------------+
-| IBM Db2          | ``pip install ibm_db_sa``             | ``db2+ibm_db://``                               |
+| IBM Db2          | ``ibm_db_sa``                         | ``db2+ibm_db://``                               |
 +------------------+---------------------------------------+-------------------------------------------------+
-| MySQL            | ``pip install mysqlclient``           | ``mysql://``                                    |
+| MySQL            | ``incubator-superset[mysql]``         | ``mysql://``                                    |
 +------------------+---------------------------------------+-------------------------------------------------+
 | Oracle           | ``pip install cx_Oracle``             | ``oracle://``                                   |
 +------------------+---------------------------------------+-------------------------------------------------+
-| PostgreSQL       | ``pip install psycopg2``              | ``postgresql+psycopg2://``                      |
+| PostgreSQL       | ``incubator-superset[postgres]``      | ``postgresql+psycopg2://``                      |
 +------------------+---------------------------------------+-------------------------------------------------+
-| Presto           | ``pip install pyhive``                | ``presto://``                                   |
+| Presto           | ``incubator-superset[presto]``        | ``presto://``                                   |
 +------------------+---------------------------------------+-------------------------------------------------+
-| SAP HANA         | ``pip install hdbcli sqlalchemy-hana``|  ``hana://``                                    |
-|                  | or                                    |                                                 |
-|                  | ``pip install apache-superset[hana]`` |                                                 |
+| SAP HANA         | ``apache-superset[hana]``             | ``hana://``                                     |
 +------------------+---------------------------------------+-------------------------------------------------+
-| Snowflake        | ``pip install snowflake-sqlalchemy``  | ``snowflake://``                                |
+| Snowflake        | ``snowflake-sqlalchemy``              | ``snowflake://``                                |
 +------------------+---------------------------------------+-------------------------------------------------+
-| SQLite           |                                       | ``sqlite://``                                   |
+| SQLite           | N/A                                   | ``sqlite://``                                   |
 +------------------+---------------------------------------+-------------------------------------------------+
-| SQL Server       | ``pip install pymssql``               | ``mssql://``                                    |
+| SQL Server       | ``pymssql``                           | ``mssql://``                                    |
 +------------------+---------------------------------------+-------------------------------------------------+
-| Teradata         | ``pip install sqlalchemy-teradata``   | ``teradata://``                                 |
+| Teradata         | ``sqlalchemy-teradata``               | ``teradata://``                                 |
 +------------------+---------------------------------------+-------------------------------------------------+
-| Vertica          | ``pip install                         |  ``vertica+vertica_python://``                  |
-|                  | sqlalchemy-vertica-python``           |                                                 |
+| Vertica          | ``sqlalchemy-vertica-python``         | ``vertica+vertica_python://``                   |
 +------------------+---------------------------------------+-------------------------------------------------+
 
 Note that many other databases are supported, the main criteria being the
