@@ -28,13 +28,8 @@ RUN mkdir /app \
             default-libmysqlclient-dev \
             libpq-dev \
         && rm -rf /var/lib/apt/lists/*
-
-# First, we just wanna install requirements, which will allow us to utilize the cache
-# in order to only build if and only if requirements change
-COPY ./requirements/*.txt /app/
-RUN cd /app \
-        && pip install --no-cache -r requirements/local.txt
-
+### Requirments installation were removed from here coz there were deps on the superset files
+### Alter solution would be copy everything to this container early on.
 
 ######################################################################
 # Node stage to deal with static asset construction
@@ -49,8 +44,11 @@ RUN mkdir -p /app/superset-frontend
 RUN mkdir -p /app/superset/assets
 COPY ./docker/frontend-mem-nag.sh /
 COPY ./superset-frontend/package* /app/superset-frontend/
-RUN /frontend-mem-nag.sh \
-        && cd /app/superset-frontend \
+
+## File had to be ran like that because of the '-' in the name
+RUN chmod +x /frontend-mem-nag.sh
+ENTRYPOINT ["/frontend-mem-nag.sh"]
+RUN cd /app/superset-frontend \
         && npm ci
 
 # Next, copy in the rest and let webpack do its thing
@@ -67,6 +65,7 @@ RUN cd /app/superset-frontend \
 ARG PY_VER=3.6.9
 FROM python:${PY_VER} AS lean
 
+COPY docker/docker_init.sh /app/
 ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
     FLASK_ENV=production \
@@ -75,6 +74,7 @@ ENV LANG=C.UTF-8 \
     SUPERSET_HOME="/app/superset_home" \
     SUPERSET_PORT=8080
 
+## Had to add libsasl2-dev to install sassl
 RUN useradd --user-group --no-create-home --no-log-init --shell /bin/bash superset \
         && mkdir -p ${SUPERSET_HOME} ${PYTHONPATH} \
         && apt-get update -y \
@@ -82,22 +82,37 @@ RUN useradd --user-group --no-create-home --no-log-init --shell /bin/bash supers
             build-essential \
             default-libmysqlclient-dev \
             libpq-dev \
+            libsasl2-dev \
         && rm -rf /var/lib/apt/lists/*
 
-COPY --from=superset-py /usr/local/lib/python3.6/site-packages/ /usr/local/lib/python3.6/site-packages/
 # Copying site-packages doesn't move the CLIs, so let's copy them one by one
-COPY --from=superset-py /usr/local/bin/gunicorn /usr/local/bin/celery /usr/local/bin/flask /usr/bin/
+COPY --from=superset-py /usr/local/lib/python3.6/site-packages/ /usr/local/lib/python3.6/site-packages/
+## Had to move the copy of gunicorn from here to later as we moved the requirements installation
 COPY --from=superset-node /app/superset/static/assets /app/superset/static/assets
 COPY --from=superset-node /app/superset-frontend /app/superset-frontend
 
-## Lastly, let's install superset itself
+## Install Requirments + Superset
 COPY superset /app/superset
 COPY setup.py MANIFEST.in README.md /app/
+
+# We just wanna install requirements, which will allow us to utilize the cache
+# in order to only build if and only if requirements change
+RUN mkdir -p /app/requirements/
+COPY ./requirements/*.txt /app/requirements/
+COPY ./docker/requirements-extra.txt /app/requirements/
+RUN cd /app \
+        && pip install --no-cache -r requirements/local.txt \
+        && pip install --no-cache -r requirements/requirements-extra.txt
+
 RUN cd /app \
         && chown -R superset:superset * \
         && pip install -e .
 
-COPY ./docker/docker-entrypoint.sh /usr/bin/
+#Those Are moved from Line 83 as we need to install gunicorn first
+RUN cp -R /usr/local/bin/gunicorn /usr/local/bin/celery /usr/local/bin/flask /usr/bin/
+
+
+COPY docker/docker_entrypoint.sh /usr/bin/
 
 WORKDIR /app
 
@@ -107,20 +122,19 @@ HEALTHCHECK CMD ["curl", "-f", "http://localhost:8088/health"]
 
 EXPOSE ${SUPERSET_PORT}
 
-ENTRYPOINT ["/usr/bin/docker-entrypoint.sh"]
+ENTRYPOINT ["/usr/bin/docker_entrypoint.sh"]
 
 ######################################################################
 # Dev image...
 ######################################################################
 FROM lean AS dev
 
-COPY ./requirements/*.txt ./docker/requirements/ /app/
+RUN mkdir -p /app/requirements/
+COPY ./requirements/*.txt  /app/requirements/
 
 USER root
 # Cache everything for dev purposes...
 RUN cd /app \
     && pip install --ignore-installed -e . \
-    && pip install --ignore-installed -r requirements/local.txt \
-    && pip install --ignore-installed -r requirements-extra.txt \
-    && pip install --ignore-installed -r requirements-local.txt || true
+    && pip install --ignore-installed -r requirements/local.txt || true
 USER superset

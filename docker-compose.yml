@@ -16,15 +16,15 @@
 #
 x-superset-build: &superset-build
   args:
-    NPM_BUILD_CMD: build-dev
+    NPM_BUILD_CMD: build
   context: ./
-  dockerfile: Dockerfile-dev
+  dockerfile: Dockerfile
 x-superset-depends-on: &superset-depends-on
   - db
   - redis
 x-superset-volumes: &superset-volumes
   # /app/pythonpath_docker will be appended to the PYTHONPATH in the final container
-  - ./docker/docker-init.sh:/app/docker-init.sh
+  - ./docker/docker_init.sh:/app/docker_init.sh
   - ./docker/pythonpath_dev:/app/pythonpath
   - ./superset:/app/superset
   - ./superset-frontend:/app/superset-frontend
@@ -65,7 +65,7 @@ services:
   superset-init:
     build: *superset-build
     container_name: superset_init
-    command: ["/app/docker-init.sh"]
+    command: ["/app/docker_init.sh"]
     env_file: docker/.env
     depends_on: *superset-depends-on
     volumes: *superset-volumes
@@ -75,6 +75,7 @@ services:
     container_name: superset_node
     command: ["bash", "-c", "cd /app/superset-frontend && npm install --global webpack webpack-cli && npm install && npm run dev"]
     env_file: docker/.env
+    restart: unless-stopped
     depends_on: *superset-depends-on
     volumes: *superset-volumes
 
@@ -101,6 +102,29 @@ services:
     network_mode: host
     depends_on: *superset-depends-on
     volumes: *superset-volumes
+
+  redis-commander:
+      container_name: redis-commander
+      hostname: redis-commander
+      image: rediscommander/redis-commander:latest
+      restart: always
+      environment:
+      - REDIS_HOSTS=local:redis:6379
+      ports:
+      - "8081:8081"
+      depends_on: *superset-depends-on
+
+  pgadmin:
+    container_name: pgadmin
+    hostname: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+    - "8082:80"
+    depends_on: *superset-depends-on
+
 
 volumes:
   superset_home:
